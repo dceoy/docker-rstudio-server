@@ -1,0 +1,9 @@
+# package list
+
+apt:
+  - zsh
+  - vim
+  - git
+  - wget
+  - curl
+  - tree
