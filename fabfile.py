@@ -43,11 +43,13 @@ def init_docker(user=False):
 
 
 @task
-def permit_only_ssh(port):
-    sudo("sed -ie 's/^Port 22$/Port %s/g' /etc/ssh/sshd_config" % port)
-    sudo("service ssh restart")
+def enable_firewall(excl_port=False, ssh_port=22):
+    if ssh_port != 22:
+        sudo("sed -ie 's/^Port 22$/Port %s/g' /etc/ssh/sshd_config" % ssh_port)
+        sudo("service ssh restart")
+    if excl_port:
+        sudo("ufw allow %s" % excl_port)
     sudo("ufw default deny")
-    sudo("ufw allow %s" % port)
     sudo("ufw enable")
 
 
