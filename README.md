@@ -1,1 +1,1 @@
-# r-container
+# RStudio Server Container

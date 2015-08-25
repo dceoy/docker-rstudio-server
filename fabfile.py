@@ -28,6 +28,12 @@ def init_with_docker():
         print('Login as a non-root user.')
 
 
+@task
+def docker_pull_rstudio():
+    run("docker pull ubuntu")
+    run("docker pull dceoy/rstudio")
+
+
 def install_docker(user=False):
     if not user:
         user = run("whoami")
@@ -36,7 +42,7 @@ def install_docker(user=False):
     sudo("curl -sSL https://get.docker.com/ | sh")
     if user != 'root':
         sudo("usermod -aG docker %s" % user)
-    run("docker run hello-world")
+    sudo("docker run hello-world")
 
 
 def ssh_keygen():
