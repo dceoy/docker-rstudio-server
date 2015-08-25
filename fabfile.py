@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 
-from __future__ import with_statement
-import yaml
-from fabric.api import sudo, run, task
+from fabric.api import sudo, run, get, task
 
 
 @task
@@ -16,22 +14,21 @@ def test_connect(text=False):
 @task
 def add_user(user):
     if sudo("id %s" % user, warn_only=True).failed:
-        sudo("useradd %s" % user)
+        sudo("useradd -m -g sudo %s" % user)
         sudo("passwd %s" % user)
-        sudo("usermod -G wheel %s" % user)
 
 
 @task
-def change_pass(user=False):
-    client = run("whoami")
-    if not user or user == client:
-        run("passwd %s" % client)
+def init_with_docker():
+    if run("whoami") != 'root':
+        ssh_keygen()
+        enable_firewalld()
+        install_docker()
     else:
-        sudo("passwd %s" % user)
+        print('Login as a non-root user.')
 
 
-@task
-def init_docker(user=False):
+def install_docker(user=False):
     if not user:
         user = run("whoami")
     sudo("apt-get -y update && apt-get -y upgrade")
@@ -42,23 +39,24 @@ def init_docker(user=False):
     run("docker run hello-world")
 
 
-@task
-def enable_firewall(excl_port=False, ssh_port=22):
+def ssh_keygen():
+    user = run("whoami")
+    run("ssh-keygen -t rsa -f ~/.ssh/id_rsa")
+    get('~/.ssh/id_rsa', './key/' + user + '_id_rsa')
+    get('~/.ssh/id_rsa.pub', './key/' + user + '_id_rsa.pub')
+    run("mv ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys")
+    run("chmod 600 ~/.ssh/authorized_keys")
+    sudo("sed -i -e 's/^\(PasswordAuthentication \)yes$/\\1no/' -e 's/^#\(PermitRootLogin \)yes$/\\1no/' /etc/ssh/sshd_config")
+
+
+def enable_firewalld(excl_port=8787, ssh_port=22):
     if ssh_port != 22:
-        sudo("sed -ie 's/^Port 22$/Port %s/g' /etc/ssh/sshd_config" % ssh_port)
+        sudo("sed -ie 's/^\(Port \)22$/\1%s/g' /etc/ssh/sshd_config" % ssh_port)
         sudo("service ssh restart")
-    if excl_port:
-        sudo("ufw allow %s" % excl_port)
     sudo("ufw default deny")
+    sudo("ufw allow %s" % ssh_port)
+    sudo("ufw allow %s" % excl_port)
     sudo("ufw enable")
-
-
-@task
-def install_optional_pkgs():
-    with open('pkg.yml') as f:
-        env_config = yaml.load(f)
-    sudo("apt-get -y update && apt-get -y upgrade")
-    sudo("apt-get -y install %s" % ' '.join(env_config['apt']))
 
 
 if __name__ == '__main__':
