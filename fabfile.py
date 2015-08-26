@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import os
 from fabric.api import sudo, run, get, task
 
 
@@ -12,20 +13,29 @@ def test_connect(text=False):
 
 
 @task
-def add_user(user):
+def new_user_rsa(user, group='sudo'):
     if sudo("id %s" % user, warn_only=True).failed:
-        sudo("useradd -m -g sudo %s" % user)
+        home = '/home/' + user
+        sudo("useradd -m -g %s -d %s %s" % (group, home, user))
         sudo("passwd %s" % user)
+        sudo("mkdir %s/.ssh" % home)
+        sudo("ssh-keygen -t rsa -N '' -f %s/.ssh/id_rsa" % home)
+        get(home + '/.ssh/id_rsa', './key/' + user + '_rsa')
+        get(home + '/.ssh/id_rsa.pub', './key/' + user + '_rsa.pub')
+        os.system("chmod 600 ./key/%s" % user + '_rsa')
+        sudo("mv %s/.ssh/id_rsa.pub %s/.ssh/authorized_keys" % (home, home))
+        sudo("chmod 600 %s/.ssh/authorized_keys" % home)
+        sudo("chown -R %s:%s %s/.ssh" % (user, group, home))
 
 
 @task
-def init_with_docker():
-    if run("whoami") != 'root':
-        ssh_keygen()
-        enable_firewalld()
-        install_docker()
+def init_with_docker(user, ssh_port=443, excl_port=8787):
+    if user != 'root':
+        new_user_rsa(user)
+        enhance_security(ssh_port, excl_port)
+        install_docker(user)
     else:
-        print('Login as a non-root user.')
+        print('Set a non-root user.')
 
 
 @task
@@ -34,35 +44,24 @@ def docker_pull_rstudio():
     run("docker pull dceoy/rstudio")
 
 
-def install_docker(user=False):
-    if not user:
-        user = run("whoami")
+def install_docker(user):
     sudo("apt-get -y update && apt-get -y upgrade")
     sudo("which curl || apt-get -y install curl")
     sudo("curl -sSL https://get.docker.com/ | sh")
-    if user != 'root':
-        sudo("usermod -aG docker %s" % user)
+    sudo("usermod -aG docker %s" % user)
     sudo("docker run hello-world")
 
 
-def ssh_keygen():
-    user = run("whoami")
-    run("ssh-keygen -t rsa -f ~/.ssh/id_rsa")
-    get('~/.ssh/id_rsa', './key/' + user + '_id_rsa')
-    get('~/.ssh/id_rsa.pub', './key/' + user + '_id_rsa.pub')
-    run("mv ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys")
-    run("chmod 600 ~/.ssh/authorized_keys")
-    sudo("sed -i -e 's/^\(PasswordAuthentication \)yes$/\\1no/' -e 's/^#\(PermitRootLogin \)yes$/\\1no/' /etc/ssh/sshd_config")
-
-
-def enable_firewalld(excl_port=8787, ssh_port=22):
-    if ssh_port != 22:
-        sudo("sed -ie 's/^\(Port \)22$/\1%s/g' /etc/ssh/sshd_config" % ssh_port)
-        sudo("service ssh restart")
+def enhance_security(ssh_port, excl_port=8787):
+    rex = ('s/^#\?\(PasswordAuthentication \)yes$/\\1no/',
+           's/^#\?\(PermitRootLogin \)yes$/\\1no/',
+           's/^#\?\(Port \)22$/\\1' + str(ssh_port) + '/')
+    sudo("sed -i -e '%s' -e '%s' -e '%s' /etc/ssh/sshd_config" % rex)
+    sudo("service ssh restart")
     sudo("ufw default deny")
     sudo("ufw allow %s" % ssh_port)
     sudo("ufw allow %s" % excl_port)
-    sudo("ufw enable")
+    sudo("ufw --force enable")
 
 
 if __name__ == '__main__':
