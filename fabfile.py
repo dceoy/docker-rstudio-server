@@ -2,11 +2,11 @@
 
 
 import os
-from fabric.api import sudo, run, get, task
+from fabric.api import sudo, run, get, put, task
 
 
 @task
-def new_ssh_user(user, pw, group='sudo'):
+def host_new_user(user, pw, group='sudo'):
     home = '/home/' + user
     sudo("useradd -m -d %s %s" % (home, user))
     sudo("echo '%s:%s' | chpasswd" % (user, pw))
@@ -28,30 +28,59 @@ def ssh_keygen(user, home):
 
 
 @task
-def docker_bash(pid=False):
-    run("docker ps -a")
+def docker_new_user(user, pw, pid=False):
+    pid = docker_pid(pid)
+    run("docker exec -it %s useradd -m %s" % (pid, user))
+    docker_ch_pass(user, pw, pid)
+
+
+@task
+def docker_ch_pass(user, pw, pid=False):
+    pid = docker_pid(pid)
+    run("docker exec -it %s bash -c \"echo '%s:%s' | chpasswd\"" % (pid, user, pw))
+
+
+@task
+def docker_i_bash(pid=False):
+    pid = docker_pid(pid)
+    run("docker exec -it %s bash" % pid)
+
+
+@task
+def docker_ps(option=False):
+    if not option:
+        option = ''
+    run("docker ps %s" % option)
+
+
+def docker_pid(pid=False):
     if pid:
-        run("docker exec -it %s bash" % pid)
+        return(pid)
     else:
-        run("docker exec -it `docker ps -lq` bash")
+        return(run("docker ps -lq"))
 
 
 @task
-def docker_run_rstudio(port=8787):
-    run("wget https://raw.githubusercontent.com/dceoy/r-server-docker/master/Dockerfile")
-    run("docker build -t dceoy/rstudio .")
-    run("docker run -d -p %d:8787 dceoy/rstudio" % port)
-
-
-@task
-def init_rstudio(user, pw, ssh_port=443, rs_port=8787):
-    if user != 'root':
-        new_ssh_user(user, pw)
-        enhance_security(ssh_port, rs_port)
-        install_docker(user)
-        docker_run_rstudio(rs_port)
+def init_docker_rstudio(host_user, host_pw, r_user=False, r_pw=False, ssh_port=22, r_port=8787):
+    if host_user != 'root':
+        host_new_user(host_user, host_pw)
+        enhance_security(ssh_port, r_port)
+        install_docker(host_user)
+        docker_run_rstudio(r_port)
+        run("docker exec -it %s userdel -r rstudio" % docker_pid(False))
+        if not r_user:
+            r_user = host_user
+        if not r_pw:
+            r_pw = host_pw
+        docker_new_user(r_user, r_pw)
     else:
         print('Set a non-root user.')
+
+
+def docker_run_rstudio(port=8787):
+    put('./Dockerfile', './Dockerfile')
+    run("docker build -t dceoy/rstudio .")
+    run("docker run -d -p %d:8787 dceoy/rstudio" % port)
 
 
 def install_docker(user):
