@@ -78,8 +78,9 @@ def init_docker_rstudio(host_user, host_pw, r_user=False, r_pw=False, ssh_port=2
 
 
 def docker_run_rstudio(port=8787):
-    put('./Dockerfile', './Dockerfile')
-    run("docker build -t dceoy/rstudio .")
+    if run("docker pull dceoy/rstudio", warn_only=True).failed:
+        put('./Dockerfile', './Dockerfile')
+        run("docker build -t dceoy/rstudio .")
     run("docker run -d -p %d:8787 dceoy/rstudio" % port)
 
 
