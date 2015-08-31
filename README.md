@@ -19,8 +19,8 @@ Fabric is needed.
 
 ```sh
 $ pip install -U fabric
-$ git clone https://github.com/dceoy/fab-r-docker.git
-$ cd fab-r-docker
+$ git clone https://github.com/dceoy/rstudio-server-docker.git
+$ cd rstudio-server-docker
 ```
 
 Usage
@@ -59,10 +59,27 @@ Once run `init_docker_rstudio`, RStudio Server will be available.
 Example
 -------
 
-Provision RStudio Server on a droplet in [DigitalOcean](https://www.digitalocean.com/?refcode=2b30b7b68ac5)
+##### Deployment of RStudio Server on [DigitalOcean](https://www.digitalocean.com/?refcode=2b30b7b68ac5)
+
+Install [tugboat](https://github.com/pearkes/tugboat) for managing DigitalOcean droplets on command line.
 
 ```sh
-$ fab -u root -H [droplet ip] -i [root ssh key] init_docker_rstudio:docker,rstudio
+$ gem install --no-document tugboat
+$ exec $SHELL -l
+$ tugboat authorize   # needs Client ID and API Key
+```
+
+Create a droplet and show information.
+
+```sh
+$ tugboart create -i [ubuntu image id] -k [ssh key id] ubuntu   # takes about 1 minute
+$ tugboat info ubuntu
+```
+
+Provision the server and deploy RStudio Server.
+
+```sh
+$ fab -u root -H [droplet ip] -i [ssh key] init_docker_rstudio:docker,rstudio
 ```
 
 RStudio Server is going to be available at `http://<droplet-ip>:8787`.
