@@ -11,3 +11,5 @@ Available as an image from [Docker Hub](https://hub.docker.com/r/dceoy/rstudio/)
 ```sh
 $ docker pull dceoy/rstudio
 ```
+
+Default username / password: `rstudio` / `rstudio`
