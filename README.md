@@ -1,5 +1,5 @@
-RStudio Server on Docker
-========================
+docker-rstudio-server
+=====================
 
 [![](https://imagelayers.io/badge/dceoy/rstudio:latest.svg)](https://imagelayers.io/?images=dceoy/rstudio:latest 'Get your own badge on imagelayers.io')
 
