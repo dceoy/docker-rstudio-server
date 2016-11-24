@@ -13,8 +13,8 @@ RUN set -e \
       && apt-get clean
 
 RUN set -e \
-      && curl https://s3.amazonaws.com/rstudio-server/current.ver \
-        | xargs -I {} curl http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o rstudio.deb \
+      && curl -s https://s3.amazonaws.com/rstudio-server/current.ver \
+        | xargs -I {} curl -s http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o rstudio.deb \
       && gdebi -n rstudio.deb \
       && rm rstudio.deb
 
