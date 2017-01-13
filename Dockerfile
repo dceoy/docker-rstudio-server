@@ -7,9 +7,11 @@ RUN set -e \
 
 RUN set -e \
       && echo 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial/' >> /etc/apt/sources.list \
-      && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 381BA480 \
+      && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
       && apt-get -y update \
-      && apt-get -y install r-base r-cran-* \
+      && apt-cache -q search r-cran-* \
+        | awk '$1 !~ /^r-cran-r2jags$/ { p = p" "$1 } END{ print p }' \
+        | xargs apt-get -y install r-base \
       && apt-get clean
 
 RUN set -e \
