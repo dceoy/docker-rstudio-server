@@ -15,6 +15,13 @@ RUN set -e \
       && apt-get clean
 
 RUN set -e \
+      && R -e "options(repos = 'https://cloud.r-project.org/'); \
+               install.packages('devtools', dependencies = TRUE); \
+               devtools::update_packages(dependencies = TRUE); \
+               devtools::update_packages(c('ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
+                                         dependencies = TRUE);"
+
+RUN set -e \
       && curl -s https://s3.amazonaws.com/rstudio-server/current.ver \
         | xargs -I {} curl -s http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o rstudio.deb \
       && gdebi -n rstudio.deb \
