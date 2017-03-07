@@ -16,9 +16,9 @@ RUN set -e \
 
 RUN set -e \
       && R -e "options(repos = 'https://cloud.r-project.org/'); \
-               install.packages(pkgs = 'devtools', dependencies = TRUE); \
-               devtools::update_packages(pkgs = c('ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
-                                         dependencies = TRUE);"
+               update.packages(ask = FALSE); \
+               install.packages(pkgs = c('devtools', 'ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
+                                dependencies = TRUE);"
 
 RUN set -e \
       && curl -s https://s3.amazonaws.com/rstudio-server/current.ver \
