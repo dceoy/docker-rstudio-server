@@ -1,23 +1,15 @@
-FROM ubuntu:xenial
+FROM r-base
 
 RUN set -e \
       && apt-get -y update \
       && apt-get -y upgrade \
-      && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core apt-transport-https
-
-RUN set -e \
-      && echo 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial/' >> /etc/apt/sources.list \
-      && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
-      && apt-get -y update \
-      && apt-cache -q search r-cran-* \
-        | awk '$1 !~ /^r-cran-r2jags$/ { p = p" "$1 } END{ print p }' \
-        | xargs apt-get -y install r-base \
+      && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core \
       && apt-get clean
 
 RUN set -e \
       && R -e "options(repos = 'https://cloud.r-project.org/'); \
                update.packages(ask = FALSE); \
-               install.packages(pkgs = c('devtools', 'ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
+               install.packages(pkgs = c('devtools', 'ggmcmc', 'mlr', 'rstan', 'tidyverse'), \
                                 dependencies = TRUE);"
 
 RUN set -e \
