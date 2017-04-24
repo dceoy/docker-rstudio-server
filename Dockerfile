@@ -14,11 +14,14 @@ RUN set -e \
          | xargs apt-get -y install r-base \
       && apt-get clean
 
+ENV CRAN_URL https://cloud.r-project.org/
+
 RUN set -e \
-      && R -e "options(repos = 'https://cloud.r-project.org/'); \
-               update.packages(ask = FALSE); \
-               install.packages(pkgs = c('devtools', 'ggmcmc', 'mlr', 'rstan', 'tidyverse'), \
-                                dependencies = TRUE);"
+      && R -e "update.packages(ask = FALSE, repos = '${CRAN_URL}');"
+
+RUN set -e \
+      && R -e "install.packages(pkgs = c('devtools', 'ggmcmc', 'mlr', 'rstan', 'tidyverse'), \
+                                dependencies = TRUE, repos = '${CRAN_URL}');"
 
 RUN set -e \
       && v=$(curl -s https://s3.amazonaws.com/rstudio-server/current.ver) \
