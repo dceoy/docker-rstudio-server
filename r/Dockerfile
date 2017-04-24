@@ -3,7 +3,7 @@ FROM r-base
 RUN set -e \
       && apt-get -y update \
       && apt-get -y upgrade \
-      && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core \
+      && apt-get -y install curl libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core r-cran-* \
       && apt-get clean
 
 RUN set -e \

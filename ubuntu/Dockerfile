@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu
 
 RUN set -e \
       && apt-get -y update \
@@ -9,7 +9,7 @@ RUN set -e \
       && echo 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial/' >> /etc/apt/sources.list \
       && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
       && apt-get -y update \
-      && apt-get -y install r-base \
+      && apt-get -y install r-base r-cran-* \
       && apt-get clean
 
 RUN set -e \
