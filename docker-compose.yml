@@ -1,10 +1,11 @@
-version: '2'
+version: '3'
 
 services:
 
   rstudio-server:
-    image: dceoy/rstudio-server
     container_name: rstudio-server
+    build:
+      context: .
     ports:
       - "8787:8787"
     volumes:
