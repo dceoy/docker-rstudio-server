@@ -1,4 +1,6 @@
-FROM ubuntu
+FROM ubuntu:latest
+
+ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/rstudio.ver
 
 RUN set -e \
       && apt-get -y update \
@@ -17,15 +19,12 @@ RUN set -e \
 ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
-      && R -e "update.packages(ask = FALSE, repos = '${CRAN_URL}');"
-
-RUN set -e \
-      && R -e "install.packages(pkgs = c('devtools', 'ggmcmc', 'mlr', 'rstan', 'tidyverse'), \
+      && R -e "update.packages(ask = FALSE, repos = '${CRAN_URL}'); \
+               install.packages(pkgs = c('devtools', 'ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
                                 dependencies = TRUE, repos = '${CRAN_URL}');"
 
 RUN set -e \
-      && v=$(curl -s https://s3.amazonaws.com/rstudio-server/current.ver) \
-      && curl -sS http://download2.rstudio.org/rstudio-server-${v}-amd64.deb -o /tmp/rstudio.deb \
+      && curl -sS http://download2.rstudio.org/rstudio-server-$(cat /tmp/rstudio.ver)-amd64.deb -o /tmp/rstudio.deb \
       && gdebi -n /tmp/rstudio.deb
 
 RUN set -e \
