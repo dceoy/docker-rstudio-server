@@ -20,7 +20,7 @@ ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
       && R -e "update.packages(ask = FALSE, repos = '${CRAN_URL}'); \
-               install.packages(pkgs = c('dbplyr', 'devtools', 'ggmcmc', 'glmnet', 'rstan', 'tidyverse', 'xgboost'), \
+               install.packages(pkgs = c('dbplyr', 'devtools', 'tidyverse'), \
                                 dependencies = TRUE, repos = '${CRAN_URL}');"
 
 RUN set -e \
