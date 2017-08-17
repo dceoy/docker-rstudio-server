@@ -17,9 +17,11 @@ RUN set -e \
 ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
-      && R -e "update.packages(ask = FALSE, repos = '${CRAN_URL}'); \
-               install.packages(pkgs = c('dbplyr', 'devtools', 'doParallel', 'foreach', 'tidyverse'), \
-                                dependencies = TRUE, repos = '${CRAN_URL}');"
+      && R -e "\
+      update.packages(ask = FALSE, repos = '${CRAN_URL}'); \
+      pkgs <- c('dbplyr', 'devtools', 'docopt', 'doParallel', 'foreach', 'gridExtra', 'tidyverse'); \
+      install.packages(pkgs = pkgs, dependencies = TRUE, repos = '${CRAN_URL}'); \
+      sapply(pkgs, require, character.only = TRUE);"
 
 RUN set -e \
       && curl -sS http://download2.rstudio.org/rstudio-server-$(cat /tmp/rstudio.ver)-amd64.deb -o /tmp/rstudio.deb \
