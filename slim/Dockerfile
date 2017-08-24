@@ -25,7 +25,8 @@ RUN set -e \
 
 RUN set -e \
       && curl -sS http://download2.rstudio.org/rstudio-server-$(cat /tmp/rstudio.ver)-amd64.deb -o /tmp/rstudio.deb \
-      && gdebi -n /tmp/rstudio.deb
+      && gdebi -n /tmp/rstudio.deb \
+      && rm -rf /tmp/*
 
 RUN set -e \
       && useradd -m -d /home/rstudio rstudio \
