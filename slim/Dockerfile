@@ -1,20 +1,21 @@
-FROM ubuntu:xenial
+FROM ubuntu
 
-ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/rstudio.ver
+ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
       && apt-get -y update \
       && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core apt-transport-https
 
 RUN set -e \
-      && echo 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial/' >> /etc/apt/sources.list \
+      && grep '^DISTRIB_CODENAME' /etc/lsb-release \
+        | cut -d = -f 2 \
+        | xargs -I {} echo "deb ${CRAN_URL}bin/linux/ubuntu {}/" \
+        | tee -a /etc/apt/sources.list \
       && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
       && apt-get -y update \
       && apt-get -y upgrade \
       && apt-get -y install r-base \
       && apt-get clean
-
-ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
       && R -e "\
@@ -24,7 +25,8 @@ RUN set -e \
       sapply(pkgs, require, character.only = TRUE);"
 
 RUN set -e \
-      && curl -sS http://download2.rstudio.org/rstudio-server-$(cat /tmp/rstudio.ver)-amd64.deb -o /tmp/rstudio.deb \
+      && curl -sS https://s3.amazonaws.com/rstudio-server/current.ver \
+        | xargs -I {} curl -sS http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o /tmp/rstudio.deb \
       && gdebi -n /tmp/rstudio.deb \
       && rm -rf /tmp/*
 
