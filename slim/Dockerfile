@@ -4,7 +4,7 @@ ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
       && apt-get -y update \
-      && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core apt-transport-https
+      && apt-get -y install libapparmor1 libcurl4-openssl-dev libxml2-dev libssl-dev gdebi-core apt-transport-https pandoc
 
 RUN set -e \
       && grep '^DISTRIB_CODENAME' /etc/lsb-release \
@@ -20,7 +20,7 @@ RUN set -e \
 RUN set -e \
       && R -e "\
       update.packages(ask = FALSE, repos = '${CRAN_URL}'); \
-      pkgs <- c('dbplyr', 'devtools', 'docopt', 'doParallel', 'foreach', 'gridExtra', 'tidyverse'); \
+      pkgs <- c('dbplyr', 'devtools', 'docopt', 'doParallel', 'foreach', 'gridExtra', 'rmarkdown', 'tidyverse'); \
       install.packages(pkgs = pkgs, dependencies = TRUE, repos = '${CRAN_URL}'); \
       sapply(pkgs, require, character.only = TRUE);"
 
