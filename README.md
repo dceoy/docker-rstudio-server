@@ -15,7 +15,7 @@ $ docker pull dceoy/rstudio-server
 Run a container
 
 ```sh
-$ docker run -p 8787:8787 -v ${HOME}:/home/rstudio -d dceoy/rstudio-server
+$ docker container run --rm -p 8787:8787 -v $(pwd):/home/rstudio -w /home/rstudio -d dceoy/rstudio-server
 ```
 
 Default values:
