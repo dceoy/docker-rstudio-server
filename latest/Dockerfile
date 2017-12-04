@@ -17,6 +17,7 @@ RUN set -e \
       && apt-cache -q search r-cran-* \
         | awk '$1 !~ /^r-cran-r2jags$/ { p = p" "$1 } END{ print p }' \
         | xargs apt-get -y install r-base \
+      && apt-get -y autoremove \
       && apt-get clean
 
 RUN set -e \
