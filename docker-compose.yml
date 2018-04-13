@@ -9,5 +9,5 @@ services:
     ports:
       - 8787:8787
     volumes:
-      - .:/home/rstudio
+      - ${PWD}:/home/rstudio
     working_dir: /home/rstudio
