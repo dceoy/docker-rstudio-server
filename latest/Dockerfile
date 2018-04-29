@@ -10,7 +10,9 @@ RUN set -e \
       && apt-get -y update \
       && apt-get -y upgrade \
       && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev \
-                            libssh2-1-dev libssl-dev libxml2-dev pandoc r-base r-cran-* \
+                            libmagick++-dev libmariadb-client-lgpl-dev libglu1-mesa-dev \
+                            libopenmpi-dev libpq-dev libssh2-1-dev libssl-dev libxml2-dev pandoc \
+                            r-base r-cran-* \
       && apt-get -y autoremove \
       && apt-get clean
 
