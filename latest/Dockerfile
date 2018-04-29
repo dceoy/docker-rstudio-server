@@ -1,22 +1,16 @@
-FROM ubuntu
+FROM ubuntu:latest
 
+ENV DEBIAN_FRONTEND noninteractive
 ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
-      && apt-get -y update \
-      && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev libssl-dev libxml2-dev pandoc
+      && ln -sf /bin/bash /bin/sh
 
 RUN set -e \
-      && grep '^DISTRIB_CODENAME' /etc/lsb-release \
-        | cut -d = -f 2 \
-        | xargs -I {} echo "deb ${CRAN_URL}bin/linux/ubuntu {}/" \
-        | tee -a /etc/apt/sources.list \
-      && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
       && apt-get -y update \
       && apt-get -y upgrade \
-      && apt-cache -q search r-cran-* \
-        | awk '$1 !~ /^r-cran-r2jags$/ { p = p" "$1 } END{ print p }' \
-        | xargs apt-get -y install r-base \
+      && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev \
+                            libssh2-1-dev libssl-dev libxml2-dev pandoc r-base r-cran-* \
       && apt-get -y autoremove \
       && apt-get clean
 
