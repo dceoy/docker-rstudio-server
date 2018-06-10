@@ -8,7 +8,7 @@ RUN set -e \
 
 RUN set -e \
       && apt-get -y update \
-      && apt-get -y upgrade \
+      && apt-get -y dist-upgrade \
       && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev \
                             libmagick++-dev libmariadb-client-lgpl-dev libglu1-mesa-dev \
                             libopenmpi-dev libpq-dev libssh2-1-dev libssl-dev libxml2-dev pandoc \

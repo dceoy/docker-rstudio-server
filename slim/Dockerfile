@@ -8,7 +8,7 @@ RUN set -e \
 
 RUN set -e \
       && apt-get -y update \
-      && apt-get -y upgrade \
+      && apt-get -y dist-upgrade \
       && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev \
                             libssl-dev libxml2-dev pandoc r-base \
       && apt-get -y autoremove \
