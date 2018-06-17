@@ -9,12 +9,22 @@ RUN set -e \
 RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
-      && apt-get -y install apt-transport-https gdebi-core libapparmor1 libcurl4-openssl-dev \
-                            libmagick++-dev libmariadb-client-lgpl-dev libglu1-mesa-dev \
-                            libopenmpi-dev libpq-dev libssh2-1-dev libssl-dev libxml2-dev pandoc \
-                            r-base r-cran-* \
+      && apt-get -y install --no-install-recommends --no-install-suggests \
+                            apt-transport-https apt-utils curl default-jdk g++ gcc gdebi-core \
+                            gfortran git libapparmor1 libblas-dev libcurl4-gnutls-dev libedit2 \
+                            libgtk2.0-dev libssl1.0-dev liblapack-dev libmagick++-dev \
+                            libmariadb-client-lgpl-dev libglu1-mesa-dev libopenmpi-dev libpq-dev \
+                            libssh2-1-dev libssl1.0-dev libxml2-dev lsb-release openmpi-bin \
+                            pandoc psmisc r-base r-cran-* sudo x11-common \
       && apt-get -y autoremove \
-      && apt-get clean
+      && apt-get clean \
+      && rm -rf /var/lib/apt/lists/*
+
+RUN set -e \
+      && curl -sS https://s3.amazonaws.com/rstudio-server/current.ver \
+        | xargs -I {} curl -sS http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o /tmp/rstudio.deb \
+      && gdebi -n /tmp/rstudio.deb \
+      && rm -rf /tmp/rstudio.deb
 
 RUN set -e \
       && R -e "\
@@ -24,15 +34,8 @@ RUN set -e \
       sapply(pkgs, require, character.only = TRUE);"
 
 RUN set -e \
-      && curl -sS https://s3.amazonaws.com/rstudio-server/current.ver \
-        | xargs -I {} curl -sS http://download2.rstudio.org/rstudio-server-{}-amd64.deb -o /tmp/rstudio.deb \
-      && gdebi -n /tmp/rstudio.deb \
-      && rm -rf /tmp/rstudio.deb
-
-RUN set -e \
-      && useradd -m -d /home/rstudio rstudio \
-      && echo rstudio:rstudio \
-        | chpasswd
+      && useradd -m -d /home/rstudio -G rstudio-server rstudio \
+      && echo rstudio:rstudio | chpasswd
 
 EXPOSE 8787
 
