@@ -10,5 +10,12 @@ services:
     ports:
       - 8787:8787
     volumes:
-      - ${PWD}:/home/rstudio
+      - rstudio-server-data:/home/rstudio
     working_dir: /home/rstudio
+    command:
+      - /usr/lib/rstudio-server/bin/rserver
+      - --server-daemonize=0
+      - --server-app-armor-enabled=0
+
+volumes:
+  rstudio-server-data:

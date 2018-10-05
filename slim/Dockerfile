@@ -4,7 +4,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV CRAN_URL https://cloud.r-project.org/
 
 RUN set -e \
-      && ln -sf /bin/bash /bin/sh
+      && ln -sf /bin/bash /bin/sh \
+      && ln -s /dev/stdout /var/log/syslog
 
 RUN set -e \
       && apt-get -y update \
@@ -24,7 +25,8 @@ RUN set -e \
 
 RUN set -e \
       && useradd -m -d /home/rstudio -G rstudio-server rstudio \
-      && echo rstudio:rstudio | chpasswd
+      && echo rstudio:rstudio | chpasswd \
+      && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 
 EXPOSE 8787
 
