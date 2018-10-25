@@ -6,14 +6,16 @@ services:
     container_name: rstudio-server
     build:
       context: latest
+      dockerfile: Dockerfile
     image: dceoy/rstudio-server:latest
     ports:
       - 8787:8787
     volumes:
       - rstudio-server-data:/home/rstudio
     working_dir: /home/rstudio
-    command:
+    entrypoint:
       - /usr/lib/rstudio-server/bin/rserver
+    command:
       - --server-daemonize=0
       - --server-app-armor-enabled=0
 
