@@ -13,8 +13,8 @@ RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        curl gdebi-core libapparmor1 libedit2 libssl1.0-dev lsb-release \
-        psmisc r-base sudo \
+        curl gdebi-core libapparmor1 libedit2 libssl1.0.0 lsb-release psmisc \
+        r-base sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
@@ -26,7 +26,7 @@ RUN set -e \
       && rm -rf /tmp/rstudio.deb /tmp/ver
 
 RUN set -e \
-      && useradd -m -d /home/rstudio -G rstudio-server rstudio \
+      && useradd -m -d /home/rstudio -g rstudio-server rstudio \
       && echo rstudio:rstudio | chpasswd \
       && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 

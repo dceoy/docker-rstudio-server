@@ -22,7 +22,7 @@ RUN set -e \
 
 RUN set -e \
       && clir update \
-      && useradd -m -d /home/rstudio -G rstudio-server rstudio \
+      && useradd -m -d /home/rstudio -g rstudio-server rstudio \
       && echo rstudio:rstudio | chpasswd \
       && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 
