@@ -20,7 +20,7 @@ RUN set -e \
       && rm -rf /var/lib/apt/lists/*
 
 RUN set -e \
-      && curl -sS -o /tmp/rstudio.deb \
+      && curl -S -o /tmp/rstudio.deb \
         http://download2.rstudio.org/rstudio-server-$(cat /tmp/ver)-amd64.deb \
       && gdebi -n /tmp/rstudio.deb \
       && rm -rf /tmp/rstudio.deb /tmp/ver

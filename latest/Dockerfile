@@ -15,7 +15,7 @@ RUN set -e \
 
 RUN set -e \
       && ln -s /dev/stdout /var/log/syslog \
-      && curl -sS -o /tmp/rstudio.deb \
+      && curl -S -o /tmp/rstudio.deb \
         http://download2.rstudio.org/rstudio-server-$(cat /tmp/ver)-amd64.deb \
       && gdebi -n /tmp/rstudio.deb \
       && rm -rf /tmp/rstudio.deb /tmp/ver
