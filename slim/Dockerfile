@@ -25,14 +25,16 @@ RUN set -e \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 
-RUN set -e \
+RUN set -eo pipefail \
       && ln -s /dev/stdout /var/log/syslog \
-      && curl -S -o /tmp/rstudio.deb \
-        https://download2.rstudio.org/server/bionic/amd64/rstudio-server-$(cut -f 1 -d - /tmp/ver)-amd64.deb \
+      && cut -f 1 -d - /tmp/ver \
+        | xargs -i curl -SL \
+          https://download2.rstudio.org/server/bionic/amd64/rstudio-server-{}-amd64.deb \
+          -o /tmp/rstudio.deb \
       && apt-get -y install /tmp/rstudio.deb \
       && rm -rf /tmp/rstudio.deb /tmp/ver
 
-RUN set -e \
+RUN set -eo pipefail \
       && useradd -m -d /home/rstudio -g rstudio-server rstudio \
       && echo rstudio:rstudio | chpasswd \
       && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
