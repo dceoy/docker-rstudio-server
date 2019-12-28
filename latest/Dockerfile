@@ -21,9 +21,9 @@ RUN set -e \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
         curl g++ gcc gfortran git make libapparmor1 libblas-dev libclang-dev \
-        libcurl4-gnutls-dev liblapack-dev libmariadb-client-lgpl-dev \
-        libpq-dev libsqlite3-dev libssh2-1-dev libssl-dev libxml2-dev \
-        lsb-release pandoc psmisc sudo \
+        libcurl4-gnutls-dev libgit2-dev liblapack-dev \
+        libmariadb-client-lgpl-dev libpq-dev libsqlite3-dev libssh2-1-dev \
+        libssl-dev libxml2-dev lsb-release pandoc psmisc sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
