@@ -11,19 +11,12 @@ RUN set -e \
 
 RUN set -e \
       && apt-get -y update \
-      && apt-get -y install --no-install-recommends --no-install-suggests \
-        apt-transport-https apt-utils ca-certificates gnupg r-cran-* \
-      && echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" \
-        > /etc/apt/sources.list.d/r.list \
-      && apt-key adv --keyserver keyserver.ubuntu.com \
-        --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
-      && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        curl g++ gcc gfortran git make libapparmor1 libblas-dev libclang-dev \
-        libcurl4-gnutls-dev libgit2-dev liblapack-dev \
-        libmariadb-client-lgpl-dev libpq-dev libsqlite3-dev libssh2-1-dev \
-        libssl-dev libxml2-dev lsb-release pandoc psmisc sudo \
+        apt-transport-https apt-utils ca-certificates curl g++ gcc gfortran \
+        git make libapparmor1 libblas-dev libclang-dev libcurl4-gnutls-dev \
+        libgit2-dev liblapack-dev libmariadb-dev libsqlite3-dev libssh-dev \
+        libssl-dev libxml2-dev lsb-release pandoc psmisc r-cran-* sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
