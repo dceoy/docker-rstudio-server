@@ -6,7 +6,7 @@ ENV CRAN_URL https://cloud.r-project.org/
 ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/ver
 
 RUN set -e \
-      && ln -sf /bin/bash /bin/sh
+      && ln -sf bash /bin/sh
 
 RUN set -e \
       && apt-get -y update \

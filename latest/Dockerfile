@@ -7,7 +7,7 @@ COPY --from=dceoy/r-tidyverse:latest /usr/local /usr/local
 ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/ver
 
 RUN set -e \
-      && ln -sf /bin/bash /bin/sh
+      && ln -sf bash /bin/sh
 
 RUN set -e \
       && apt-get -y update \
