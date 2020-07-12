@@ -1,22 +1,14 @@
-FROM ubuntu:latest
+FROM dceoy/r-tidyverse:latest
 
-ENV DEBIAN_FRONTEND noninteractive
 ENV CRAN_URL https://cloud.r-project.org/
 
-COPY --from=dceoy/r-tidyverse:latest /usr/local /usr/local
 ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/ver
-
-RUN set -e \
-      && ln -sf bash /bin/sh
 
 RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        apt-transport-https apt-utils ca-certificates curl g++ gcc gfortran \
-        git make libapparmor1 libblas-dev libclang-dev libcurl4-gnutls-dev \
-        libgit2-dev liblapack-dev libmariadb-dev libsqlite3-dev libssh-dev \
-        libssl-dev libxml2-dev lsb-release pandoc psmisc r-cran-* sudo \
+        libapparmor1 libclang-dev lsb-release psmisc r-cran-* sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
