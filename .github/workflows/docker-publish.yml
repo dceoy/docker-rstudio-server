@@ -22,30 +22,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and push rstudio-server:latest
-        id: docker_build_latest
-        uses: docker/build-push-action@v2
-        with:
-          context: ./latest
-          file: ./Dockerfile
-          push: true
-          tags: ${{ github.actor }}/rstudio-server:latest
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build_latest.outputs.digest }}
-
-      - name: Build and push rstudio-server:slim
-        id: docker_build_slim
-        uses: docker/build-push-action@v2
-        with:
-          context: ./slim
-          file: ./Dockerfile
-          push: true
-          tags: ${{ github.actor }}/rstudio-server:slim
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build_slim.outputs.digest }}
+      - name: Build and push images
+        env:
+          REPOSITORY: ${{ github.actor }}/rstudio-server
+        run: |
+          for t in 'latest' 'slim'; do
+            docker image build -t "${REPOSITORY}:${t}" "${t}" \
+              && docker image push "${REPOSITORY}:${t}"
+          done
