@@ -13,7 +13,8 @@ RUN set -e \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
         apt-transport-https apt-utils ca-certificates curl libapparmor1 \
-        libclang-dev libedit2 libssl-dev lsb-release psmisc r-base sudo \
+        libclang-dev libedit2 libpq5 libssl-dev lsb-release psmisc r-base \
+        sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
