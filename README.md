@@ -11,7 +11,7 @@ Docker image
 Pull the image from [Docker Hub](https://hub.docker.com/r/dceoy/rstudio-server/).
 
 ```sh
-$ docker pull dceoy/rstudio-server
+$ docker image pull dceoy/rstudio-server
 ```
 
 Default username and password:
