@@ -13,10 +13,11 @@ RUN set -e \
 
 RUN set -eo pipefail \
       && curl -SL https://s3.amazonaws.com/rstudio-server/current.ver \
+        | sed -e 's/+/-/; s/\.[a-z]\+[0-9]\+$//;' \
         | xargs -i curl -SL \
           https://download2.rstudio.org/server/bionic/amd64/rstudio-server-{}-amd64.deb \
           -o /tmp/rstudio-server.deb \
-      && gdebi /tmp/rstudio-server.deb \
+      && gdebi --non-interactive /tmp/rstudio-server.deb \
       && rm -rf /tmp/rstudio-server.deb
 
 RUN set -eo pipefail \
