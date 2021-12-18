@@ -2,8 +2,6 @@ FROM dceoy/r-tidyverse:latest
 
 ENV CRAN_URL https://cloud.r-project.org/
 
-ADD https://s3.amazonaws.com/rstudio-server/current.ver /tmp/ver
-
 RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
@@ -14,19 +12,21 @@ RUN set -e \
       && rm -rf /var/lib/apt/lists/*
 
 RUN set -eo pipefail \
-      && ln -s /dev/stdout /var/log/syslog \
-      && cut -f 1 -d - /tmp/ver \
+      && curl -SL https://s3.amazonaws.com/rstudio-server/current.ver \
         | xargs -i curl -SL \
           https://download2.rstudio.org/server/bionic/amd64/rstudio-server-{}-amd64.deb \
-          -o /tmp/rstudio.deb \
-      && gdebi /tmp/rstudio.deb \
-      && rm -rf /tmp/rstudio.deb /tmp/ver
+          -o /tmp/rstudio-server.deb \
+      && gdebi /tmp/rstudio-server.deb \
+      && rm -rf /tmp/rstudio-server.deb
 
 RUN set -eo pipefail \
-      && clir update \
+      && ln -s /dev/stdout /var/log/syslog \
+      && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf \
       && useradd -m -d /home/rstudio -g rstudio-server rstudio \
-      && echo rstudio:rstudio | chpasswd \
-      && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
+      && echo rstudio:rstudio | chpasswd
+
+RUN set -e \
+      && clir update
 
 EXPOSE 8787
 
