@@ -8,7 +8,7 @@ RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        libapparmor1 libclang-dev lsb-release psmisc r-cran-* sudo \
+        gdebi-core libapparmor1 libclang-dev lsb-release psmisc r-cran-* sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
@@ -19,7 +19,7 @@ RUN set -eo pipefail \
         | xargs -i curl -SL \
           https://download2.rstudio.org/server/bionic/amd64/rstudio-server-{}-amd64.deb \
           -o /tmp/rstudio.deb \
-      && apt-get -y install /tmp/rstudio.deb \
+      && gdebi /tmp/rstudio.deb \
       && rm -rf /tmp/rstudio.deb /tmp/ver
 
 RUN set -eo pipefail \
