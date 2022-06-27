@@ -6,8 +6,12 @@ RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        gdebi-core libapparmor1 libclang-dev lsb-release libssl1.1 psmisc \
-        r-cran-* sudo \
+        gdebi-core libapparmor1 libclang-dev lsb-release psmisc r-base sudo
+
+RUN set -e \
+      && apt-get -y update \
+      && apt-get -y install --no-install-recommends --no-install-suggests \
+        r-cran-* \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
@@ -21,7 +25,7 @@ RUN set -eo pipefail \
       && gdebi --non-interactive /tmp/rstudio-server.deb \
       && rm -rf /tmp/rstudio-server.deb
 
-RUN set -eo pipefail \
+RUN set -e \
       && ln -s /dev/stdout /var/log/syslog \
       && echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf \
       && useradd -m -d /home/rstudio -g rstudio-server rstudio \
