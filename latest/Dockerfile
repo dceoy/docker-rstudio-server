@@ -6,7 +6,8 @@ RUN set -e \
       && apt-get -y update \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
-        gdebi-core libapparmor1 libclang-dev lsb-release psmisc r-cran-* sudo \
+        gdebi-core libapparmor1 libclang-dev lsb-release libssl1.1 psmisc \
+        r-cran-* sudo \
       && apt-get -y autoremove \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
