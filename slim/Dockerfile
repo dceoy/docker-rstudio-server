@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV CRAN_URL https://cloud.r-project.org/
@@ -11,7 +11,7 @@ RUN set -e \
       && apt-get -y dist-upgrade \
       && apt-get -y install --no-install-recommends --no-install-suggests \
         apt-transport-https apt-utils ca-certificates curl gdebi-core \
-        libapparmor1 libclang-dev libedit2 libpq5 libssl-dev lsb-release \
+        libapparmor1 libclang-dev libedit2 libpq5 libssl1.1 lsb-release \
         psmisc r-base sudo \
       && apt-get -y autoremove \
       && apt-get clean \
