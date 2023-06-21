@@ -8,10 +8,14 @@ Dockerfile for RStudio Server
 Docker image
 ------------
 
-Pull the image from [Docker Hub](https://hub.docker.com/r/dceoy/rstudio-server/).
+Build images.
 
 ```sh
-$ docker image pull dceoy/rstudio-server
+# RStudio Server with tidyverse
+$ docker image build -t dceoy/rstudio-server:latest ./latest
+
+# RStudio Server without additional packages
+$ docker image build -t dceoy/rstudio-server:slim ./slim
 ```
 
 Default username and password:
@@ -22,13 +26,13 @@ Default username and password:
 Usage
 -----
 
-Run a server
+Run a server.
 
 ```sh
 $ docker container run --rm -p 8787:8787 -v ${PWD}:/home/rstudio -w /home/rstudio dceoy/rstudio-server
 ```
 
-Run a server with docker-compose
+Run a server with docker-compose.
 
 ```sh
 $ docker-compose -f /path/to/docker-rstudio-server/docker-compose.yml up
